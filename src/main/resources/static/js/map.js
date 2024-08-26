@@ -18,8 +18,10 @@ function fail(err) {
 }
 
 function loadNaverMap(lat, lng, zoom) {
+    const position = new naver.maps.LatLng(lat, lng);
+
     const mapOptions = {
-        center: new naver.maps.LatLng(lat, lng),
+        center: position,
         zoom: zoom,
         minZoom: 7,                                 //지도의 최소 줌 레벨
         zoomControl: true,                          //줌 컨트롤의 표시 여부
@@ -27,11 +29,21 @@ function loadNaverMap(lat, lng, zoom) {
             position: naver.maps.Position.TOP_RIGHT
         },
         tileTransition: true,                       // 타일 fadeIn 효과
-        scaleControl: true,
+        scaleControl: false,
         logoControl: true,
-        mapDataControl: true,
+        mapDataControl: false,
         mapTypeControl: true
     }
 
     const map = new naver.maps.Map(mapDiv, mapOptions);
+
+    const markerOptions = {
+        position: position.destinationPoint(90, 1),
+        map: map,
+        icon: {
+            url: '/icon/currentPosition30.png'
+        }
+    }
+
+    var marker = new naver.maps.Marker(markerOptions);
 }
