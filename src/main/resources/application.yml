@@ -7,8 +7,24 @@ spring:
     prefix: classpath:/templates/
     suffix: .html
 
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:tcp://localhost/~/h2DB/suddenPoo
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+
+  batch:
+    jdbc:
+      initialize-schema: always
+
 logging.level:
   org.hibernate.sql: debug
 
 map:
   id: ${MAPID}
+
+csv-path: /toilet.csv
