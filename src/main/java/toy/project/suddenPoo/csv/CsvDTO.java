@@ -1,6 +1,8 @@
 package toy.project.suddenPoo.csv;
 
+import lombok.Builder;
 import lombok.Data;
+import toy.project.suddenPoo.entity.Csv;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -22,5 +24,13 @@ public class CsvDTO {
         }
 
         return result;
+    }
+
+    @Builder
+    public CsvDTO(Csv csv) {
+        this.toiletName = csv.getToiletName();
+        this.roadName = csv.getRoadName();
+        this.latitude = csv.getLatitude();
+        this.longitude = csv.getLongitude();
     }
 }

@@ -22,19 +22,19 @@ public class SimpleJobConfiguration {
     private final CsvReader csvReader;
     private final CsvSchedulerWriter csvSchedulerWriter;
 
-    @Bean
-    public Job toiletDataLoadJob(JobRepository jobRepository, Step toiletDataLoadStep) {
-        return new JobBuilder("toiletInformationLoadJob", jobRepository)
-                .start(toiletDataLoadStep)
-                .build();
-    }
-
-    @Bean
-    public Step toiletDataLoadStep(JobRepository jobRepository, PlatformTransactionManager platformTransactionManager) {
-        return new StepBuilder("toiletDataLoadStep", jobRepository)
-                .<CsvDTO, CsvDTO>chunk(100, platformTransactionManager)
-                .reader(csvReader.csvScheduleReader())
-                .writer(csvSchedulerWriter)
-                .build();
-    }
+//    @Bean
+//    public Job toiletDataLoadJob(JobRepository jobRepository, Step toiletDataLoadStep) {
+//        return new JobBuilder("toiletInformationLoadJob", jobRepository)
+//                .start(toiletDataLoadStep)
+//                .build();
+//    }
+//
+//    @Bean
+//    public Step toiletDataLoadStep(JobRepository jobRepository, PlatformTransactionManager platformTransactionManager) {
+//        return new StepBuilder("toiletDataLoadStep", jobRepository)
+//                .<CsvDTO, CsvDTO>chunk(100, platformTransactionManager)
+//                .reader(csvReader.csvScheduleReader())
+//                .writer(csvSchedulerWriter)
+//                .build();
+//    }
 }

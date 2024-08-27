@@ -1,4 +1,5 @@
 const mapDiv = document.getElementById('map');
+let map;
 
 // 현재 위치 파악
 navigator.geolocation.getCurrentPosition(success, fail);
@@ -10,16 +11,17 @@ function success(pos) {
     const lng = pos.coords.longitude;
 
     loadNaverMap(lat, lng, zoom);
+    updateToilet();
 }
 
 // 위치 정보 거부 시
 function fail(err) {
     loadNaverMap(37.3595704, 127.105399, 15);
+    updateToilet();
 }
 
 function loadNaverMap(lat, lng, zoom) {
     const position = new naver.maps.LatLng(lat, lng);
-
     const mapOptions = {
         center: position,
         zoom: zoom,
@@ -35,15 +37,28 @@ function loadNaverMap(lat, lng, zoom) {
         mapTypeControl: true
     }
 
-    const map = new naver.maps.Map(mapDiv, mapOptions);
+    map = new naver.maps.Map(mapDiv, mapOptions);
+}
 
-    const markerOptions = {
-        position: position.destinationPoint(90, 1),
-        map: map,
-        icon: {
-            url: '/icon/currentPosition30.png'
-        }
+function updateToilet() {
+    const bounds = map.getBounds();
+    const range = {
+        swLat: bounds._sw._lat,
+        neLat: bounds._ne._lat,
+        swLng: bounds._sw._lng,
+        neLng: bounds._ne._lng
     }
 
-    var marker = new naver.maps.Marker(markerOptions);
+    $.ajax({
+        url: "/api/toilets",
+        method: "post",
+        contentType: "application/json",
+        data: JSON.stringify(range),
+        success: function(res) {
+           console.log(res);
+        },
+        error: function(req, status, error) {
+           console.log(error);
+        }
+    });
 }
