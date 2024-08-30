@@ -1,12 +1,16 @@
 const mapDiv = document.getElementById('map');
+const zoom = 16;
+
 let map;
+let markers = new Array();
+let infoWindows = new Array();
+
 
 // 현재 위치 파악
 navigator.geolocation.getCurrentPosition(success, fail);
 
 // 위치 정보 수락 시
 function success(pos) {
-    let zoom = 15;
     const lat = pos.coords.latitude;
     const lng = pos.coords.longitude;
 
@@ -16,7 +20,7 @@ function success(pos) {
 
 // 위치 정보 거부 시
 function fail(err) {
-    loadNaverMap(37.3595704, 127.105399, 15);
+    loadNaverMap(37.3595704, 127.105399, zoom);
     updateToilet();
 }
 
@@ -55,10 +59,41 @@ function updateToilet() {
         contentType: "application/json",
         data: JSON.stringify(range),
         success: function(res) {
-           console.log(res);
+           for (let i=0; i<res.length; i++) {
+               const marker = new naver.maps.Marker({
+                  map: map,
+                  title: res[i].toiletName,
+                  position: new naver.maps.LatLng(res[i].latitude, res[i].longitude)
+               });
+
+               const infoWindow = new naver.maps.InfoWindow({
+                  content: '<div style="width:200px;text-align: center;padding: 10px"><b>' + res[i].toiletName +
+                      '</b></br>' + res[i].roadName + '</div>'
+               });
+               markers.push(marker);
+               infoWindows.push(infoWindow);
+           }
+
+            for (let i=0; i<markers.length; i++) {
+                naver.maps.Event.addListener(markers[i], 'click', getClickHandler(i));
+            }
         },
         error: function(req, status, error) {
            console.log(error);
         }
     });
+}
+
+// 해당 마커의 인덱스를 seq라는 클로저 변수로 저장하는 이벤트 핸들러를 반환합니다.
+function getClickHandler(seq) {
+    return function (e) {
+        const marker = markers[seq],
+            infoWindow = infoWindows[seq];
+
+        if (infoWindow.getMap()) {
+            infoWindow.close();
+        } else {
+            infoWindow.open(map, marker);
+        }
+    }
 }
