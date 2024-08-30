@@ -24,6 +24,7 @@ public class CsvReader {
         FlatFileItemReader<CsvDTO> flatFileItemReader = new FlatFileItemReader<>();
         flatFileItemReader.setResource(new ClassPathResource(csvPath));
         flatFileItemReader.setEncoding("UTF-8");
+
         // 데이터 내부에 개행이 있으면 꼭! 추가해주세요
         flatFileItemReader.setRecordSeparatorPolicy(new DefaultRecordSeparatorPolicy());
 
@@ -32,7 +33,7 @@ public class CsvReader {
         // 따로 설정하지 않으면 기본값은 ","
         DelimitedLineTokenizer delimitedLineTokenizer = new DelimitedLineTokenizer();
 
-        // "name", "phoneNumber", "comment", "address" 필드 설정
+        // "toiletName", "roadName", "latitude", "longitude" 필드 설정
         delimitedLineTokenizer.setNames(CsvDTO.getFieldNames().toArray(String[]::new));
         defaultLineMapper.setLineTokenizer(delimitedLineTokenizer);
 
