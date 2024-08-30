@@ -19,11 +19,10 @@ def geocoding(address):
 
 
 # 데이터 불러오기
-df = pd.read_csv('./toilet.csv', encoding='utf8', nrows=1000)
-address = df['소재지도로명주소']
+df = pd.read_csv('./toilet.csv', encoding='utf8')
 
-latitude = []
-longitude = []
+address = df['소재지도로명주소']
+results = []
 
 # tdqm 적용 및 경도, 위도 출력
 for i in tqdm(address, desc="Processing address", unit="address"):
@@ -33,12 +32,25 @@ for i in tqdm(address, desc="Processing address", unit="address"):
 	if geocode_result:
 		lat, lng = geocode_result
 	else:
-		lat = df.loc[df['소재지도로명주소'] == i, 'WGS84위도'].values[0] if not pd.isna(df.loc[df['소재지도로명주소'] == i, 'WGS84위도'].values[0]) else 0
-		lng = df.loc[df['소재지도로명주소'] == i, 'WGS84경도'].values[0] if not pd.isna(df.loc[df['소재지도로명주소'] == i, 'WGS84경도'].values[0]) else 0
+		# WGS84 좌표값 확인
+		wgs84_lat = df.loc[df['소재지도로명주소'] == i, 'WGS84위도']
+		wgs84_lng = df.loc[df['소재지도로명주소'] == i, 'WGS84경도']
 
-	latitude.append(lat)
-	longitude.append(lng)
+		# 값이 존재하고 NaN이 아닌 경우만 선택
+		if not wgs84_lat.empty and not pd.isna(wgs84_lat.values[0]):
+			lat = wgs84_lat.values[0]
+		else:
+			lat = 0
+
+		if not wgs84_lng.empty and not pd.isna(wgs84_lng.values[0]):
+			lng = wgs84_lng.values[0]
+		else:
+			lng = 0
+
+	# 주소와 WGS84 모두 유효하지 않아 [0, 0]이 아닐 때만 결과에 추가
+	if lat != 0 or lng != 0:
+		results.append({'화장실명': df.loc[df['소재지도로명주소'] == i, '화장실명'].values[0],'소재지도로명주소': i, '위도': lat, '경도': lng})
 
 # 결과 저장
-address_df = pd.DataFrame({'화장실명': df['화장실명'], '소재지도로명주소': df['소재지도로명주소'], '위도': latitude, '경도': longitude})
-address_df.to_csv('경위도_toilet.csv')
+address_df = pd.DataFrame(results)
+address_df.to_csv('경위도_toilet.csv', index=False, encoding='utf-8-sig')
