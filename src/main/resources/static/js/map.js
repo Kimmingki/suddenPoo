@@ -1,10 +1,11 @@
 const mapDiv = document.getElementById('map');
 const zoom = 16;
+const searchBtn = $('#searchBtn');
 
 let map;
 let markers = new Array();
 let infoWindows = new Array();
-
+let currentBounds;
 
 // 현재 위치 파악
 navigator.geolocation.getCurrentPosition(success, fail);
@@ -42,10 +43,23 @@ function loadNaverMap(lat, lng, zoom) {
     }
 
     map = new naver.maps.Map(mapDiv, mapOptions);
+
+    // 지도를 움직이면 '현 위치에서 찾기' 표출
+    naver.maps.Event.addListener(map, 'idle', function() {
+        const newBounds = map.getBounds();
+
+        if (!currentBounds.equals(newBounds)) {
+            searchBtn.show(); // 범위가 변경되면 버튼 표시
+        } else {
+            searchBtn.hide(); // 범위가 동일하면 버튼 숨김
+        }
+    });
 }
 
 function updateToilet() {
     const bounds = map.getBounds();
+    currentBounds = bounds;
+
     const range = {
         swLat: bounds._sw._lat,
         neLat: bounds._ne._lat,
@@ -53,6 +67,10 @@ function updateToilet() {
         neLng: bounds._ne._lng
     }
 
+    // 기존 마커 제거
+    removeAllMarkers();
+
+    // 서버에서 데이터 가져오기
     $.ajax({
         url: "/api/toilets",
         method: "post",
@@ -97,3 +115,21 @@ function getClickHandler(seq) {
         }
     }
 }
+
+// 모든 마커 제거 함수
+function removeAllMarkers() {
+    for (let i = 0; i < markers.length; i++) {
+        markers[i].setMap(null); // 지도에서 마커 제거
+    }
+    markers = [];
+
+    for (let i = 0; i < infoWindows.length; i++) {
+        infoWindows[i].close();
+    }
+    infoWindows = [];
+}
+
+searchBtn.on('click', function() {
+    updateToilet();
+    searchBtn.hide();
+});
