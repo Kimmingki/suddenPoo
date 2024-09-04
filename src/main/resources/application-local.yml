@@ -9,9 +9,9 @@ spring:
 
   datasource:
     driver-class-name: org.h2.Driver
-    url: ${DBURL}
-    username: ${DBUSER}
-    password: ${DBPW}
+    url: jdbc:h2:tcp://localhost/~/h2DB/suddenPoo
+    username: sa
+    password:
 
   jpa:
     hibernate:
