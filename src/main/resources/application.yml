@@ -8,7 +8,7 @@ spring:
     suffix: .html
 
   datasource:
-    driver-class-name: org.h2.Driver
+    driver-class-name: org.mariadb.jdbc.Driver
     url: ${DBURL}
     username: ${DBUSER}
     password: ${DBPW}
