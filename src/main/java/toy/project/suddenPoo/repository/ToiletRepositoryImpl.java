@@ -4,11 +4,10 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
 import toy.project.suddenPoo.entity.Csv;
-import toy.project.suddenPoo.entity.QCsv;
 
 import java.util.List;
 
-import static toy.project.suddenPoo.entity.QCsv.*;
+import static toy.project.suddenPoo.entity.QCsv.csv;
 
 @Repository
 public class ToiletRepositoryImpl implements ToiletRepositoryCustom{
